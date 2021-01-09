@@ -83,7 +83,7 @@ def train_valid(data_root, name, img_enc, pc_enc, pc_dec, optimizer, scheduler, 
         print('Resume from epoch %d...' % mon.epoch)
 
     mon.run_training(net, solver, train_loader, n_epochs, scheduler=scheduler, eval_loader=val_loader,
-                     valid_freq=val_freq, reduce='mean')
+                     valid_freq=val_freq, reduce='mean', device='cuda')
     print('Training finished!')
 
 

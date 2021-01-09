@@ -1,4 +1,5 @@
 import argparse
+import torch
 
 parser = argparse.ArgumentParser('GraphX-convolution')
 parser.add_argument('config_file', type=str, help='config file to dictate training/testing')
@@ -29,7 +30,8 @@ gin.external_configurable(PointCloudResLowRankGraphXUpDecoder, 'pc_upreslowrankg
 def test_each_category(data_root, checkpoint_folder, img_enc, pc_enc, pc_dec, color_img=False, n_points=250, **kwargs):
     mon.print_freq = 1
     mon.current_folder = checkpoint_folder
-    states = mon.load('training.pt', type='torch')
+    # states = mon.load('training.pt')
+    states = torch.load(os.path.join(checkpoint_folder, 'training.pt'))
     net = PointcloudDeformNet((bs,) + (3 if color_img else 1, 224, 224), (bs, n_points, 3), img_enc, pc_enc, pc_dec)
     print(net)
     net.load_state_dict(states['model_state_dict'])
@@ -39,7 +41,7 @@ def test_each_category(data_root, checkpoint_folder, img_enc, pc_enc, pc_dec, co
         if not os.path.exists(os.path.join(mon.current_folder, file_cat)):
             os.mkdir(os.path.join(mon.current_folder, file_cat))
 
-        test_data = ShapeNet([file_cat], path=data_root, grayscale=not color_img, type='test', n_points=n_points)
+        test_data = ShapeNet(path=data_root, grayscale=not color_img, type='test', n_points=n_points)
         test_loader = DataLoader(test_data, batch_size=bs, shuffle=False, num_workers=10, collate_fn=collate)
 
         mon.set_iter(0)

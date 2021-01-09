@@ -1,4 +1,4 @@
-GraphX.data_root = None
+GraphX.data_root = data/ShapeNet
 
 GraphX.color_img = False
 GraphX.n_points = 2000

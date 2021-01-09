@@ -7,4 +7,4 @@ GraphX.pc_dec = @pc_upresgraphxdec
 GraphX.adain = True
 GraphX.projection = True
 GraphX.n_points = 250
-GraphX.checkpoint_folder = None
+GraphX.checkpoint_folder = 'snapshots/'
