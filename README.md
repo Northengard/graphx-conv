@@ -66,6 +66,10 @@ python train.py path/to/a/config/file (--gpu 0)
 To resume a half-done training, simply specify the checkpoint folder in the config file.
 Then run the training script as in the training step.
 
+### Pre-Trained model
+
+pre-trained weights are [available here](https://drive.google.com/file/d/116CzeMcxGy5ACV4VEFYP-dmWrD-CPJLW/view?usp=sharing).
+
 ### Evaluation
 
 Be sure to use the same config file and specify the checkpoint folder in the config file.
