@@ -31,11 +31,12 @@ def test_each_category(data_root, checkpoint_folder, img_enc, pc_enc, pc_dec, co
     mon.print_freq = 1
     mon.current_folder = checkpoint_folder
     # states = mon.load('training.pt')
-    states = torch.load(os.path.join(checkpoint_folder, 'training.pt'))
+    states = torch.load(os.path.join(checkpoint_folder, 'training.pt'), map_location='cpu')
     net = PointcloudDeformNet((bs,) + (3 if color_img else 1, 224, 224), (bs, n_points, 3), img_enc, pc_enc, pc_dec)
     print(net)
     net.load_state_dict(states['model_state_dict'])
     net.eval()
+    net.cuda()
 
     for file_cat in os.listdir(data_root):
         if not os.path.exists(os.path.join(mon.current_folder, file_cat)):
@@ -44,12 +45,14 @@ def test_each_category(data_root, checkpoint_folder, img_enc, pc_enc, pc_dec, co
         test_data = ShapeNet(path=data_root, grayscale=not color_img, type='test', n_points=n_points)
         test_loader = DataLoader(test_data, batch_size=bs, shuffle=False, num_workers=10, collate_fn=collate)
 
-        mon.set_iter(0)
-        mon.clear_scalar_stats(file_cat + '/test chamfer')
+        mon.iter = 0
+        mon.clear_num_stats(file_cat + '/test chamfer')
         print('Testing...')
         with T.set_grad_enabled(False):
             for itt, batch in enumerate(test_loader):
                 init_pc, image, gt_pc = batch
+                init_pc = init_pc.to(torch.float32)
+                image = image.to(torch.float32)
                 if nnt.cuda_available:
                     init_pc = init_pc.cuda()
                     image = image.cuda()
